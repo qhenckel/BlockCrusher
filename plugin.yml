@@ -1,0 +1,5 @@
+name: BlockSmasher
+main: io.github.qhenckel.blocksmasher.BlockSmasher
+version: 1.7
+description: Allows players to "crush" blocks with pistons
+author: Quinn Henckel

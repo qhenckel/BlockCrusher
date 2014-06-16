@@ -1,0 +1,67 @@
+version: 1.6
+  # This is a list of all blocks that can be used to crush against.
+  # Do not use obsidian, bedrock or any other block that cannot be pushed.
+  # The piston must move forward or the plugin will not work.
+crushblocks:
+  - IRON_BLOCK
+  
+  # This is a list of blocks that can't be crushed!
+blacklist:
+  # - COBBLESTONE
+  # - DIAMOND_ORE
+
+  # How many blocks can be crushed at once.
+  # No more than 11 as pistons can only push 12
+crushdistance: 1
+
+
+  # This determines whether a block drops its self or its mined equivalent.
+  # false : stone drops cobble. true : stone drops stone
+dropactual: false
+
+  # This is a list of the blocks you can use as crushers.
+  # This list is not exhaustive but these are the only supported blocks.
+  # Other blocks might work but i have tested these.
+
+  # STONE
+  # GRASS
+  # DIRT
+  # COBBLESTONE
+  # WOOD
+  # SAND
+  # GRAVEL
+  # GOLD_ORE
+  # IRON_ORE
+  # COAL_ORE
+  # LOG
+  # SPONGE
+  # LAPIS_ORE
+  # LAPIS_BLOCK
+  # SANDSTONE
+  # WOOL
+  # GOLD_BLOCK
+  # IRON_BLOCK
+  # BRICK
+  # MOSSY_COBBLESTONE
+  # DIAMOND_ORE
+  # DIAMOND_BLOCK
+  # WORKBENCH
+  # FURNACE
+  # REDSTONE_ORE
+  # CLAY
+  # NETHERRACK
+  # SMOOTH_BRICK
+  # IRON_FENCE
+  # MYCEL
+  # NETHER_BRICK
+  # ENDER_STONE
+  # EMERALD_ORE
+  # EMERALD_BLOCK
+  # ANVIL
+  # REDSTONE_BLOCK
+  # QUARTZ_ORE
+  # QUARTZ_BLOCK
+  # STAINED_CLAY
+  # HAY_BLOCK
+  # HARD_CLAY
+  # COAL_BLOCK
