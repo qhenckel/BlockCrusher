@@ -1,9 +1,9 @@
 package io.github.qhenckel.blocksmasher;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -24,45 +24,41 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 	    
 	@EventHandler
     public void onPiston(BlockPistonExtendEvent event) {
-		List<org.bukkit.block.Block> blocklist = event.getBlocks();
 		int crushdistance = getConfig().getInt("crushdistance") + 1;
-		try{
-			for (int blocks = 0; blocks != crushdistance; blocks++){
-				if (isCrusher(blocklist.get(blocks))){
-					Block crush = blocklist.get(blocks);
-					for (int i = 0; i < blocks; i++)
-						if(blacklist(blocklist.get(i))){
-							if(dropToChest()){
-								Chest c = getChest(crush);
-								if(c == null){
-									ItemStack is = new ItemStack(typeToDrop(blocklist.get(i)));
-									event.getBlock().getWorld().dropItem(blocklist.get(i).getLocation(), is);
-									blocklist.get(i).setType(Material.AIR);
-								} else {
-									ItemStack is = new ItemStack(typeToDrop(blocklist.get(i)));
-									Inventory inv = c.getBlockInventory();
-									HashMap<Integer, ItemStack> hm = inv.addItem(is);
-									if(!hm.isEmpty()){
-										event.getBlock().getWorld().dropItem(blocklist.get(i).getLocation(), is);
-									}
-									blocklist.get(i).setType(Material.AIR);
-								}
-								
-							} else {
-								ItemStack is = new ItemStack(typeToDrop(blocklist.get(i)));
-								event.getBlock().getWorld().dropItem(blocklist.get(i).getLocation(), is);
-								blocklist.get(i).setType(Material.AIR);
-							}
-						} else {
-							event.setCancelled(true);
-							event.getBlock().getWorld().playEffect(event.getBlock().getLocation(), Effect.ZOMBIE_DESTROY_DOOR, 1012);
-							event.getBlock().getWorld().playEffect(event.getBlock().getLocation(), Effect.SMOKE, 2000);
-						}
-				}
+		List<Block> crush = new ArrayList<Block>();		
+		Block crusher = null;
+		Chest c = null;
+		int count = 0;
+		
+		for(Block b : event.getBlocks()){
+			if(isBlacklist(b)){continue;}
+			if(isCrusher(b)){crusher = b; continue;}
+			crush.add(b);
+			if(count > crushdistance){break;}
+			count++;
+			
+		}
+		
+		if(crusher == null){return;}
+		if(dropToChest()){c = getChest(crusher);}
+		if(c == null){
+			for(Block b : crush){
+				ItemStack is = new ItemStack(typeToDrop(b));
+				event.getBlock().getWorld().dropItem(b.getLocation(), is);
+				b.setType(Material.AIR);
 			}
-		} catch(IndexOutOfBoundsException e){ return; }
-		  catch(NullPointerException e) {return;}
-    }
+		} else {
+			Inventory inv = c.getBlockInventory();
+			for(Block b : crush){
+				ItemStack is = new ItemStack(typeToDrop(b));
+				HashMap<Integer, ItemStack> hm = inv.addItem(is);
+				if(!hm.isEmpty()){
+					event.getBlock().getWorld().dropItem(b.getLocation(), is);
+				}
+				b.setType(Material.AIR);
+			}
+		}
+	}
 	
 	public boolean isCrusher(Block block){
 		List<String> list = (getConfig().getStringList("crushblocks"));
@@ -72,12 +68,12 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 		return false;
 	}
 	
-	public boolean blacklist(Block block){
+	public boolean isBlacklist(Block block){
 		List<String> bliststring = (getConfig().getStringList("blacklist"));
 		if (bliststring.contains(block.getType().toString())){
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 	
 	public Chest getChest(Block b){
