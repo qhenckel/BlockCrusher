@@ -14,6 +14,8 @@ blacklist:
   # No more than 11 as pistons can only push 12
 crushdistance: 1
 
+  # Should the crushed blocks be added to a chest touching the crush block?
+putIntoChest: true
 
   # This determines whether a block drops its self or its mined equivalent.
   # false : stone drops cobble. true : stone drops stone
@@ -21,7 +23,7 @@ dropactual: false
 
   # This is a list of the blocks you can use as crushers.
   # This list is not exhaustive but these are the only supported blocks.
-  # Other blocks might work but i have tested these.
+  # Other blocks might work but I have tested these.
 
   # STONE
   # GRASS
