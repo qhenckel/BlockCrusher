@@ -1,4 +1,4 @@
-version: 1.6
+version: 2.0
   # This is a list of all blocks that can be used to crush against.
   # Do not use obsidian, bedrock or any other block that cannot be pushed.
   # The piston must move forward or the plugin will not work.

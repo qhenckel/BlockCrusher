@@ -10,6 +10,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -23,39 +24,43 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 	}
 	    
 	@EventHandler
-    public void onPiston(BlockPistonExtendEvent event) {
-		int crushdistance = getConfig().getInt("crushdistance") + 1;
-		List<Block> crush = new ArrayList<Block>();		
-		Block crusher = null;
-		Chest c = null;
-		int count = 0;
-		
-		for(Block b : event.getBlocks()){
-			if(isBlacklist(b)){continue;}
-			if(isCrusher(b)){crusher = b; continue;}
-			crush.add(b);
-			if(count > crushdistance){break;}
-			count++;
+    public void onPiston(BlockPistonEvent e) {
+		getLogger().info(e.getEventName());
+		if(e.getEventName() == "BlockPistonExtendEvent"){
+			BlockPistonExtendEvent event = (BlockPistonExtendEvent) e;
+			int crushdistance = getConfig().getInt("crushdistance") + 1;
+			List<Block> crush = new ArrayList<Block>();	
+			Block crusher = null;
+			Chest c = null;
+			int count = 0;
 			
-		}
-		
-		if(crusher == null){return;}
-		if(dropToChest()){c = getChest(crusher);}
-		if(c == null){
-			for(Block b : crush){
-				ItemStack is = new ItemStack(typeToDrop(b));
-				event.getBlock().getWorld().dropItem(b.getLocation(), is);
-				b.setType(Material.AIR);
+			for(Block b : event.getBlocks()){
+				if(isBlacklist(b)){continue;}
+				if(isCrusher(b)){crusher = b; continue;}
+				crush.add(b);
+				if(count > crushdistance){break;}
+				count++;
+				
 			}
-		} else {
-			Inventory inv = c.getBlockInventory();
-			for(Block b : crush){
-				ItemStack is = new ItemStack(typeToDrop(b));
-				HashMap<Integer, ItemStack> hm = inv.addItem(is);
-				if(!hm.isEmpty()){
+			
+			if(crusher == null){return;}
+			if(dropToChest()){c = getChest(crusher);}
+			if(c == null){
+				for(Block b : crush){
+					ItemStack is = new ItemStack(typeToDrop(b));
 					event.getBlock().getWorld().dropItem(b.getLocation(), is);
+					b.setType(Material.AIR);
 				}
-				b.setType(Material.AIR);
+			} else {
+				Inventory inv = c.getBlockInventory();
+				for(Block b : crush){
+					ItemStack is = new ItemStack(typeToDrop(b));
+					HashMap<Integer, ItemStack> hm = inv.addItem(is);
+					if(!hm.isEmpty()){
+						event.getBlock().getWorld().dropItem(b.getLocation(), is);
+					}
+					b.setType(Material.AIR);
+				}
 			}
 		}
 	}
