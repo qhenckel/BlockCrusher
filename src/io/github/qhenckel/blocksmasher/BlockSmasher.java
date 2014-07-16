@@ -22,11 +22,12 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 		getServer().getPluginManager().registerEvents(this, this);
 		this.saveDefaultConfig();
 	}
-	    
+	
+	//Main drive of plugin. Is called everytime a piston moves
 	@EventHandler
     public void onPiston(BlockPistonEvent e) {
 		getLogger().info(e.getEventName());
-		if(e.getEventName() == "BlockPistonExtendEvent"){
+		if(e.getEventName() == "BlockPistonExtendEvent"){ //an attempt to have the event run even if the piston doesn't move
 			BlockPistonExtendEvent event = (BlockPistonExtendEvent) e;
 			int crushdistance = getConfig().getInt("crushdistance") + 1;
 			List<Block> crush = new ArrayList<Block>();	
@@ -36,11 +37,10 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 			
 			for(Block b : event.getBlocks()){
 				if(isBlacklist(b)){continue;}
-				if(isCrusher(b)){crusher = b; continue;}
+				if(isCrusher(b)){crusher = b; break;}
 				crush.add(b);
 				if(count > crushdistance){break;}
 				count++;
-				
 			}
 			
 			if(crusher == null){return;}
@@ -65,6 +65,7 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 		}
 	}
 	
+	//Test if the block is in the config list of blocks to use a crushing surfaces
 	public boolean isCrusher(Block block){
 		List<String> list = (getConfig().getStringList("crushblocks"));
 		if (list.contains(block.getType().toString())){
@@ -73,6 +74,7 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 		return false;
 	}
 	
+	//Read the method name
 	public boolean isBlacklist(Block block){
 		List<String> bliststring = (getConfig().getStringList("blacklist"));
 		if (bliststring.contains(block.getType().toString())){
@@ -81,6 +83,7 @@ public class BlockSmasher extends JavaPlugin implements Listener{
 		return false;
 	}
 	
+	//Needs to get more than just chests
 	public Chest getChest(Block b){
 		for(BlockFace f : BlockFace.values()){
 			Block test = b.getRelative(f);
